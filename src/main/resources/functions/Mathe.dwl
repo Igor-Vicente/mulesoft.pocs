@@ -1,0 +1,1 @@
+fun Multi100(a: Number) = a * 100
