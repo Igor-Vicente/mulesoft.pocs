@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:tracing="http://www.mulesoft.org/schema/mule/tracing" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/tracing http://www.mulesoft.org/schema/mule/tracing/current/mule-tracing.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="dc3d0563-f585-4035-97b5-1ab3c0833be5" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="da2c309f-776d-47d6-b5a3-cb5955573853">
+		<vm:connection >
+			<reconnection >
+				<reconnect-forever frequency="5000" />
+			</reconnection>
+		</vm:connection>
+		<vm:queues >
+			<vm:queue queueName="tt" queueType="PERSISTENT"/>
+		</vm:queues>
+	</vm:config>
+	<flow name="database-insert-flow" doc:id="b2a596c2-e809-40d3-b517-eeab3e778ebb" >
+		<http:listener doc:name="Listener" doc:id="d403acbe-5361-4685-9327-733ba0e1f87d" config-ref="HTTP_Listener_config" path="/users" allowedMethods="POST">
+			<http:error-response statusCode="#[vars.statusCode default 500]" >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<validation:is-true doc:name="Validate Input" doc:id="0ad6517f-80b1-4b44-96a4-3dc49985d537" expression="#[!isEmpty(payload.name) and !isEmpty(payload.birthDate)]" message="both name and birthDate are required"/>
+		<db:insert doc:name="database-insert-operation-flow" doc:id="8001b144-e195-4bc7-8972-e1d342cd27cc" config-ref="database_postgresql_config">
+			<db:sql ><![CDATA[INSERT INTO usuarios (name, birthDate) VALUES (:name, :birthDate);]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	name: payload.name,
+	birthDate: payload.birthDate as Date
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="set payload response" doc:id="8620cdfd-9bdb-4bab-bd9a-a08e73bc58ab" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="database-select-flow" doc:id="f61cb302-876d-4ec2-a1f4-f9ecab604774" >
+		<http:listener doc:name="Listener" doc:id="366c4a78-f822-4c27-893d-75906bfe455d" config-ref="HTTP_Listener_config" path="/users" allowedMethods="GET"/>
+		<db:select doc:name="SELECT * FROM usuarios;" doc:id="cf6223b9-e018-4db4-8865-2318c45383fb" config-ref="database_postgresql_config">
+			<db:sql ><![CDATA[SELECT * FROM usuarios;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="set payload response" doc:id="a681b985-fa18-4dd0-ab27-15e396475130" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="database-update-flow" doc:id="3c6879b4-e4a6-4ad6-aa00-13b916829c3a">
+		<http:listener doc:name="Listener" doc:id="5621a75c-26b5-4531-97a1-5949b32ceaec" config-ref="HTTP_Listener_config" path="/users/{id}" allowedMethods="PUT" />
+		<validation:is-true doc:name="Validate Input" doc:id="3b09daa6-3720-4d02-bbf1-c366f492c54c" expression="#[!isEmpty(payload.name)]" message="both name is required"/>
+		<db:update doc:name="Update" doc:id="596cd83c-4be4-4463-91ce-77d0a27adbea" config-ref="database_postgresql_config">
+			<db:sql ><![CDATA[update usuarios set name = :NAME where id = :ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	NAME: payload.name,
+	ID: attributes.uriParams.id
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="set payload response" doc:id="88637342-2f0a-4e81-9c10-469202098244" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="database-delete-flow" doc:id="4f578a64-4b72-4449-b19a-a6dda9cbf96e" >
+		<http:listener doc:name="Listener" doc:id="216b399e-dfda-4b04-85b2-24676e63f8a2" config-ref="HTTP_Listener_config" path="/users/{id}" allowedMethods="DELETE" />
+		<db:delete doc:name="Delete" doc:id="fca3d7b6-73dd-44da-965e-d5909d09276c" config-ref="database_postgresql_config">
+			<db:sql ><![CDATA[delete from usuarios where id = :ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	ID: attributes.uriParams.id
+}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="set payload response" doc:id="01ffd558-2261-4aca-ab6d-62ba4c70ea75" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

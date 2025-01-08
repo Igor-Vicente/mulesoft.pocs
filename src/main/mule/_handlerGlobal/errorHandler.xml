@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<configuration doc:name="Configuration" doc:id="2aaef251-bd10-47a3-84ff-da8eed071486" defaultErrorHandler-ref="Global_Error_Handler" />
+	<error-handler name="Global_Error_Handler" doc:id="69dd85af-786e-41a8-bd48-58fa8a5a7f26" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="fd963243-75a3-4dde-bd2a-bd7fd1c1edc2" type="HTTP:*">
+			<ee:transform doc:name="error response" doc:id="eb281b10-f0ab-4feb-add8-d47578c5508e" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	success: false,
+	error: error.errorMessage.payload default error.description
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="statusCode" ><![CDATA[%dw 2.0
+output application/java
+---
+ error.errorMessage.attributes.statusCode default 500]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="bcb27769-0c2e-4b0e-8844-a56aa2699fe8" type="ANY">
+			<ee:transform doc:name="error response" doc:id="870fc098-fa96-4ddb-b1f7-c26792a0d89e">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	success: false,
+	error: error.description
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="statusCode"><![CDATA[%dw 2.0
+output application/java
+---
+if(error.errorType.namespace == "VALIDATION") 400 else 500]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
+	</error-handler>
+</mule>

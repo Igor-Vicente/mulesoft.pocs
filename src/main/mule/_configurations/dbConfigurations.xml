@@ -4,4 +4,7 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<db:config name="database_postgresql_config" doc:name="Database Config" doc:id="954f02e5-6902-4572-9d2a-521e0ea16a5e" >
+		<db:generic-connection url="jdbc:postgresql://localhost:5432/learnMule" driverClassName="org.postgresql.Driver" user="postgres" password="Teste@123" />
+	</db:config>
 </mule>

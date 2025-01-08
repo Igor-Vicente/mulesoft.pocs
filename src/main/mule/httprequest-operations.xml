@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:kafka="http://www.mulesoft.org/schema/mule/kafka" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/kafka http://www.mulesoft.org/schema/mule/kafka/current/mule-kafka.xsd">
+	<flow name="external-request-flow" doc:id="a954dd93-8dc1-41db-a1ac-06e70dc73631" >
+		<http:listener doc:name="Listener" doc:id="7064c6f5-454d-4f41-902e-1b4788be727e" config-ref="HTTP_Listener_config" path="/test" >
+			<http:error-response statusCode="#[vars.statusCode]">
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	method: "GET",&#10;	host: "localhost",&#10;	path: "/fail",&#10;	uriParams: {&#10;		//id: attributes.uriParams.id&#10;	}&#10;}]' doc:name="httpRequest" doc:id="10da30ec-f9b8-423b-a863-9bca064c5ac6" variableName="httpRequest" />
+		<http:request method="#[vars.httpRequest.method]" doc:name="Request" doc:id="e733dd9b-886a-4671-bd6b-d748bc01f859" config-ref="HTTP_Request_configuration" path="#[vars.httpRequest.path]" sendCorrelationId="ALWAYS" >
+			<http:uri-params ><![CDATA[#[vars.httpRequest.uriParams default {}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="response" doc:id="9a8171d5-a5a4-4353-948b-4d9d7fb7d2f7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+
+ import * from functions::Mathe 
+
+ output application/json 
+ --- 
+ payload  update { 
+ 	case .userId -> Multi100(payload.id default 0) 
+ }]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
