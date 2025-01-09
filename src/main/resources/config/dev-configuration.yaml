@@ -1,0 +1,8 @@
+kafka:
+  servers: 'localhost:9092'
+  topic: 'learn-mule-t1-topic'
+  groupId: 'grupo-consumidor'
+  
+schema-registry:
+  url: 'http://localhost:8888'
+  

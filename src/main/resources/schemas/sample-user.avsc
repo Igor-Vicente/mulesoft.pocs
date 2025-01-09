@@ -1,0 +1,36 @@
+{
+  "name": "sample-user",
+  "type": "record",
+  "namespace": "learnmulesoft-sample-user",
+  "fields": [
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "birthDate",
+      "type": "string"
+    },
+    {
+      "name": "document",
+      "type": "string"
+    },
+    {
+      "name": "address",
+      "type": {
+        "name": "address",
+        "type": "record",
+        "fields": [
+          {
+            "name": "city",
+            "type": "string"
+          },
+          {
+            "name": "state",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ]
+}
