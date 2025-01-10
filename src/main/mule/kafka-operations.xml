@@ -15,6 +15,15 @@ http://www.mulesoft.org/schema/mule/tracing http://www.mulesoft.org/schema/mule/
 			</http:error-response>
 		</http:listener>
 		<logger level="INFO" doc:name="payload" doc:id="728ed32b-a642-4c14-8f87-26e0de1f738e" message="#['\n'] #['\n'] #[payload]"/>
+		<!-- [STUDIO:"payload to avro"]<ee:transform doc:name="payload to avro" doc:id="91c8ae36-09a8-4972-972c-93ec3d8bfccd">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/avro schemaUrl="classpath://schemas/sample-user.avsc"
+&#45;&#45;-
+payload&#93;&#93;></ee:set-payload>
+			</ee:message>
+		</ee:transform> [STUDIO] -->
+		<!-- [STUDIO:"Replace AVRO schema with id"]<confluent-schema-registry:replace-avro-schema-with-id doc:name="Replace AVRO schema with id" doc:id="5a981265-ca97-44b5-8389-9cfbab876290" config-ref="Confluent_Schema_Registry_Connector_Config" subject="#[Mule::p('kafka.topic')++'-value'&#93;"/> [STUDIO] -->
 		<kafka:publish doc:name="Publish" doc:id="fb8ab55d-cd80-4f82-aa2f-2da043a28553" config-ref="Apache_Kafka_Producer_configuration" topic="${kafka.topic}">
 			<kafka:headers ><![CDATA[#[{
 	'x-correlation-id': correlationId

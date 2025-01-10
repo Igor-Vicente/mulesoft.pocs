@@ -1,5 +1,5 @@
 {
-  "name": "sample-user",
+  "name": "sampleUser",
   "type": "record",
   "namespace": "learnmulesoft-sample-user",
   "fields": [

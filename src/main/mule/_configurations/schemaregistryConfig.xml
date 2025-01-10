@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:confluent-schema-registry="http://www.mulesoft.org/schema/mule/confluent-schema-registry" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/confluent-schema-registry http://www.mulesoft.org/schema/mule/confluent-schema-registry/current/mule-confluent-schema-registry.xsd">
+	<confluent-schema-registry:config name="Confluent_Schema_Registry_Connector_Config" doc:name="Confluent Schema Registry Connector Config" doc:id="f5cbfc45-a34e-45b1-96d4-281321e0be3a" >
+		<confluent-schema-registry:unsecured-connection baseUri="${schema-registry.url}" />
+	</confluent-schema-registry:config>
+</mule>
