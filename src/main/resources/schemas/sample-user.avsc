@@ -1,36 +1,41 @@
 {
-  "name": "sampleUser",
-  "type": "record",
-  "namespace": "learnmulesoft-sample-user",
-  "fields": [
-    {
-      "name": "name",
-      "type": "string"
-    },
-    {
-      "name": "birthDate",
-      "type": "string"
-    },
-    {
-      "name": "document",
-      "type": "string"
-    },
-    {
-      "name": "address",
-      "type": {
-        "name": "address",
-        "type": "record",
-        "fields": [
-          {
-            "name": "city",
+    "type": "record",
+    "name": "User",
+    "namespace": "mulesoft.pocs.user.avro",
+    "fields": [
+        {
+            "name": "name",
             "type": "string"
-          },
-          {
-            "name": "state",
+        },
+        {
+            "name": "birthDate",
             "type": "string"
-          }
-        ]
-      }
-    }
-  ]
+        },
+        {
+            "name": "document",
+            "type": "string"
+        },
+        {
+            "name": "address",
+            "type": {
+                "type": "record",
+                "name": "address",
+                "fields": [
+                    {
+                        "name": "city",
+                        "type": "string"
+                    },
+                    {
+                        "name": "state",
+                        "type": "string"
+                    },
+                    {
+                        "name": "zipcode",
+                        "type": "int",
+                        "default": 0
+                    }
+                ]
+            }
+        }
+    ]
 }
