@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<flow name="batch-processing-flow" doc:id="a9473973-01c4-4da0-b90b-0a0571c93c0b" >
+		<http:listener doc:name="Listener" doc:id="e1638d94-3aa5-4199-b7cf-695f9ae327df" config-ref="HTTP_Listener_config" path="/batchjob"/>
+		<ee:transform doc:name="set payload" doc:id="1a5cbe01-5f05-428e-b82a-ac8daff5345b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[{
+	"name": 'produtoA',
+	"amount": 100,
+	"price": 200
+},
+	{
+	"name": 'produtoB',
+	"amount": 40,
+	"price": "erro"
+},
+	{
+	"name": 'produtoC',
+	"amount": 2,
+	"price": 600
+},{
+	"name": 'produtoD',
+	"amount": 1,
+	"price": 900
+},]]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="a" ><![CDATA[%dw 2.0
+output application/java
+---
+9999]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<batch:job jobName="batch-processingBatch_Job" doc:id="ecabf801-4612-496f-a41f-176ba1b21ca4" maxFailedRecords="-1">
+			<batch:process-records >
+				<batch:step name="lessThan50" doc:id="591903b5-3c09-479f-b93f-28a84f01403d" acceptExpression="#[payload.amount &lt; 50]">
+					<ee:transform doc:name="Transform Message" doc:id="05e59dd9-f182-40e5-b6f4-d8c01f835ba1" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload  update {
+	case .amount -> $ +100
+    case .price -> $ + 0.99
+}]]></ee:set-payload>
+						</ee:message>
+						<ee:variables >
+							<ee:set-variable variableName="a" ><![CDATA[%dw 2.0
+output application/java
+---
+vars.a + payload.amount]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="504524d8-90b0-4ba3-a13a-6a5926b14f37" message="#[payload]"/>
+				</batch:step>
+				<batch:step name="greaterThan20" doc:id="dbe535f6-ac75-4604-83b0-0708255ca1a5" acceptExpression="#[payload.amount &gt; 20]">
+					<ee:transform doc:name="Transform Message" doc:id="dd0be223-5150-4e74-81d9-2d0823b04889" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload ++ {
+	"step2amount": payload.amount
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="b981d1ae-c067-4749-a470-ec84d5662f1c" message="#[payload]" />
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="b3eb44f8-37de-4b87-b227-dfea513df786" size="2" >
+						<file:write doc:name="Write" doc:id="433f75a0-2fe0-47db-b392-05241a587f18" path="C:/Users/vicente machado/Downloads/teste/success.json" mode="APPEND">
+							<file:content ><![CDATA[#[%dw 2.0
+output application/json
+---
+payload map ((i) -> read(i, "application/json"))]]]></file:content>
+						</file:write>
+					</batch:aggregator>
+				</batch:step>
+				<batch:step name="OnlyFailedRecords" doc:id="e7777f85-f869-46f9-979f-80372ed2e8f1" acceptPolicy="ONLY_FAILURES">
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="61550206-e1cf-4b82-b71c-7fd5826c55ef" size="2" >
+						<file:write doc:name="Write" doc:id="07a01e7f-cced-4cf1-a0bc-81d27c1ec610" path="C:/Users/vicente machado/Downloads/teste/failures.json" mode="APPEND" >
+							<file:content ><![CDATA[#[output json --- payload map read($)]]]></file:content>
+						</file:write>
+					</batch:aggregator>
+					<ee:transform doc:name="Transform Message" doc:id="e1b00b5a-5a44-4ae1-9052-99bab9047a34" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload ++ {
+	"success": "false"
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="ce60a0ce-59e5-4593-85a9-3f59587dff31" message="#[payload]" />
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete >
+				<logger level="INFO" doc:name="Logger" doc:id="ac38307d-b85c-42be-9ac1-4e7757072a07" message="#[output json --- payload]" />
+			</batch:on-complete>
+		</batch:job>
+		<ee:transform doc:name="Transform Message" doc:id="90e94aa8-8a57-4933-aae7-89922ee69f94" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
