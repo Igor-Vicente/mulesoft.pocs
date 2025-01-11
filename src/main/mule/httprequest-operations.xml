@@ -13,9 +13,7 @@ http://www.mulesoft.org/schema/mule/kafka http://www.mulesoft.org/schema/mule/ka
 			</http:error-response>
 		</http:listener>
 		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	method: "GET",&#10;	host: "localhost",&#10;	path: "/fail",&#10;	uriParams: {&#10;		//id: attributes.uriParams.id&#10;	}&#10;}]' doc:name="httpRequest" doc:id="10da30ec-f9b8-423b-a863-9bca064c5ac6" variableName="httpRequest" />
-		<http:request method="#[vars.httpRequest.method]" doc:name="Request" doc:id="e733dd9b-886a-4671-bd6b-d748bc01f859" config-ref="HTTP_Request_configuration" path="#[vars.httpRequest.path]" sendCorrelationId="ALWAYS" >
-			<http:uri-params ><![CDATA[#[vars.httpRequest.uriParams default {}]]]></http:uri-params>
-		</http:request>
+		<flow-ref doc:name="httprequest-operations-subflow" doc:id="ababd724-2f93-4296-9821-7f88eaca8c2f" name="httprequest-operations-subflow"/>
 		<ee:transform doc:name="response" doc:id="9a8171d5-a5a4-4353-948b-4d9d7fb7d2f7" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -30,4 +28,13 @@ http://www.mulesoft.org/schema/mule/kafka http://www.mulesoft.org/schema/mule/ka
 			</ee:message>
 		</ee:transform>
 	</flow>
+	<sub-flow name="httprequest-operations-subflow" doc:id="3c6d9f09-6b66-41bf-942e-7c7ead04595f" >
+		<until-successful maxRetries="1" doc:name="Until Successful" doc:id="e79fd8dd-27fe-4c5e-941f-9a85bc9c3ac7" millisBetweenRetries="10000">
+			<try doc:name="Try" doc:id="e5eab522-db20-4961-bbdd-4a1ca0dd7d0b" >
+				<http:request method="#[vars.httpRequest.method]" doc:name="External Request" doc:id="10f7c575-66d5-4e17-af3d-de60fc90dbec" config-ref="HTTP_External_Request_Config" path="#[vars.httpRequest.path]" sendCorrelationId="ALWAYS">
+			<http:uri-params><![CDATA[#[vars.httpRequest.uriParams default {}]]]></http:uri-params>
+		</http:request>
+			</try>
+		</until-successful>
+	</sub-flow>
 </mule>

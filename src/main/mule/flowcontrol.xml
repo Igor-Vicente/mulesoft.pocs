@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<flow name="flowcontrol-scather-gather-flow" doc:id="6e6a5709-1c09-4e15-a107-6ea9c0af80d3" >
+		<http:listener doc:name="Listener" doc:id="7d8a1603-b223-4d96-b793-374aeb2bcaf6" config-ref="HTTP_Listener_config" path="/gather/{id}" allowedMethods="GET">
+			<http:error-response statusCode="#[vars.statusCode default 500]" >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="29defe22-42ea-4e5e-9570-863fe0823424" >
+			<route >
+				<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	method: "GET",&#10;	host: "jsonplaceholder.typicode.com",&#10;	path: "/users/{id}",&#10;	uriParams: {&#10;		id: attributes.uriParams.id&#10;	}&#10;}]' doc:name="httpRequest" doc:id="5dd61913-3f96-4375-b48c-a56670e3c53e" variableName="httpRequest" />
+				<flow-ref doc:name="httprequest-operations-subflow" doc:id="0d5c0b8a-5927-4948-a463-8fc34bb4e686" name="httprequest-operations-subflow"/>
+			</route>
+			<route >
+				<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	method: "GET",&#10;	host: "jsonplaceholder.typicode.com",&#10;	path: "/todos/{id}",&#10;	uriParams: {&#10;		id: attributes.uriParams.id&#10;	}&#10;}]' doc:name="httpRequest" doc:id="2ab39cf3-f693-4e48-97db-537527a3705d" variableName="httpRequest" />
+				<flow-ref doc:name="httprequest-operations-subflow" doc:id="89b43bb6-b793-4e6e-b319-71f1c45379cf" name="httprequest-operations-subflow" />
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Transform Message" doc:id="38ad9224-9b7d-474a-90fa-30519b1de450" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload..payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="flowcontrol-scopes-cache-flow" doc:id="7e7bf29d-c7fa-464c-90d4-7c62a0940a1e">
+		<http:listener doc:name="Listener" doc:id="19b122ed-a057-43ed-9424-3f5004921d38" config-ref="HTTP_Listener_config" path="/cached-user/{id}" allowedMethods="GET">
+			<http:error-response statusCode="#[vars.statusCode default 500]">
+				<http:body><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<logger level="INFO" doc:name="start outside" doc:id="8564bffc-177c-4111-a892-8672bca429ae" message="#['\n'] #['start outside caching']" />
+		<ee:cache doc:name="Cache" doc:id="69e528a2-b904-4ff4-a687-e39801e4d091" cachingStrategy-ref="Caching_Strategy">
+			<logger level="INFO" doc:name="start inside" doc:id="c5ffa4e6-120b-4dd8-b6ce-e842f9bde237" message="#['\n'] #['start inside caching']" />
+			<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	method: "GET",&#10;	host: "jsonplaceholder.typicode.com",&#10;	path: "/users/{id}",&#10;	uriParams: {&#10;		id: attributes.uriParams.id&#10;	}&#10;}]' doc:name="httpRequest" doc:id="fe3f3d30-402e-4c5d-bb6c-eb7537682dc8" variableName="httpRequest" />
+			<flow-ref doc:name="httprequest-operations-subflow" doc:id="dd6193cd-d185-4f1a-b26e-56aec4988b77" name="httprequest-operations-subflow" />
+			<logger level="INFO" doc:name="end inside" doc:id="e8de2ba6-b400-45f5-b21b-6a62aa28309a" message="#['\n'] #['ended inside caching']" />
+		</ee:cache>
+		<logger level="INFO" doc:name="end outside" doc:id="d169c5da-6138-49fb-8ad4-cbdc983ce56b" message="#['\n'] #['ended outside caching']" />
+	</flow>
+	<flow name="flowcontrol-scopes-async-flow" doc:id="877b7b71-eb50-4136-926e-1119cddb91d7" >
+		<http:listener doc:name="Listener" doc:id="7850e42b-b9e8-45a1-866d-f9a455348d31" config-ref="HTTP_Listener_config" path="/async"/>
+		<logger level="INFO" doc:name="Logger" doc:id="d4998bfe-8306-4d8d-9501-8bc9ad32c8a5" message="#[p('mule.home')]"/>
+		<async doc:name="Async" doc:id="e10141ee-1ad2-4a0a-bcf8-d832f3e29c20" >
+			<ee:transform doc:name="Transform Message" doc:id="44e55f21-c2c6-427a-b4f5-396c6b0eedb4" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "over here"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="474ec05f-21b1-4046-8ccf-d5979c06a52f" message="#[payload]" />
+		</async>
+	</flow>
+</mule>
