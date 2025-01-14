@@ -8,5 +8,5 @@ schema-registry:
   
 postgresql:
   url: 'jdbc:postgresql://localhost:5432/learnMule'
-  user: '![w6vnAsIrcF0EWaZuzD6Mmw==]'
-  password: '![xVPfhs1477nehZX9BMEilQ==]'
+  user: 'postgres'
+  password: 'Teste@123'

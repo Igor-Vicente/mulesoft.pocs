@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
 	<configuration doc:name="Configuration" doc:id="2aaef251-bd10-47a3-84ff-da8eed071486" defaultErrorHandler-ref="Global_Error_Handler" />
 	<configuration-properties doc:name="Configuration properties" doc:id="8f5f1859-a8c7-4aaa-9743-8b22a75553f5" file="config/${env}-configuration.yaml" />
 	<global-property doc:name="Global Property" doc:id="33351f06-1b34-4f8f-910d-0ebeb3f539d9" name="env" value="dev" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="abdc9893-4beb-471e-b240-6595b36ba41b" file="config/${env}-configuration.yaml" key="${encrypt.key}" />
+	<global-property doc:name="Global Property" doc:id="5aab682a-0fa8-43d3-b9b4-f0a7bc640b55" name="encrypt.key" value="MuleSecure@12345" />
 	<error-handler name="Global_Error_Handler" doc:id="69dd85af-786e-41a8-bd48-58fa8a5a7f26" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="fd963243-75a3-4dde-bd2a-bd7fd1c1edc2" type="HTTP:*">
 			<ee:transform doc:name="error response" doc:id="eb281b10-f0ab-4feb-add8-d47578c5508e" >

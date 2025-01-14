@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: some-postgres
+    environment:
+      POSTGRES_PASSWORD: Teste@123
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgAdmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: Teste@123
+    ports:
+      - "15432:80"
+    networks:
+      - postgres-network
+
+networks:
+  postgres-network:
+    driver: bridge

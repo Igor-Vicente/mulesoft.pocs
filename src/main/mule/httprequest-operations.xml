@@ -6,6 +6,14 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/kafka http://www.mulesoft.org/schema/mule/kafka/current/mule-kafka.xsd">
+	<flow name="httprequest-operations-dataweave-externalized-flow" doc:id="3fdc7c9f-4769-460b-b3d3-794ffd8626a3" >
+		<http:listener doc:name="Listener" doc:id="690c84b4-55b3-41d6-981b-749cbaca89c6" config-ref="HTTP_Listener_config" path="/dwl"/>
+		<ee:transform doc:name="Transform Message" doc:id="f47c85ea-6c29-41c6-9005-737788d7bbae" >
+			<ee:message >
+				<ee:set-payload resource="dwl/add-time-stamp-to-payload.dwl" />
+			</ee:message>
+		</ee:transform>
+	</flow>
 	<flow name="external-request-flow" doc:id="a954dd93-8dc1-41db-a1ac-06e70dc73631" >
 		<http:listener doc:name="Listener" doc:id="7064c6f5-454d-4f41-902e-1b4788be727e" config-ref="HTTP_Listener_config" path="/test" >
 			<http:error-response statusCode="#[vars.statusCode]">
