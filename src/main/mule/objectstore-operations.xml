@@ -7,7 +7,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<flow name="objectstore-operations-retrieveall-flow" doc:id="d82c7f18-3c45-4e3e-b7fe-2ed97cec865b" >
-		<http:listener doc:name="Listener" doc:id="2fae1c00-c38a-4a67-b1a6-1458dfd57b98" config-ref="HTTP_Listener_config" path="/objectstore/all"/>
+		<http:listener doc:name="Listener" doc:id="2fae1c00-c38a-4a67-b1a6-1458dfd57b98" config-ref="HTTP_Listener_Config" path="/objectstore/all"/>
 		<os:retrieve-all doc:name="Retrieve all" doc:id="3a8fe199-bf63-4253-882c-872fabc7a4ad" objectStore="Object_store_persistent"/>
 		<ee:transform doc:name="Transform Message" doc:id="89abe7c2-b533-4a18-b1ca-129b65ac1eee" >
 			<ee:message >
@@ -24,7 +24,7 @@ mapObject ((value, key, index) -> {(key): {
 		</ee:transform>
 	</flow>
 	<flow name="objectstore-operationsFlow" doc:id="cde3d0d3-8990-46c8-844e-e110b8abba15" >
-		<http:listener doc:name="Listener" doc:id="995d36e1-f488-4dc8-b4f8-f88c9c813d35" config-ref="HTTP_Listener_config" path="/objectstore/save"/>
+		<http:listener doc:name="Listener" doc:id="995d36e1-f488-4dc8-b4f8-f88c9c813d35" config-ref="HTTP_Listener_Config" path="/objectstore/save"/>
 		<ee:transform doc:name="Transform Message" doc:id="6d40d6f0-3c81-4297-9e72-25829b6aab1b" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0

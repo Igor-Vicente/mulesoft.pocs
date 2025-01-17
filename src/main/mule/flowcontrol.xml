@@ -7,7 +7,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	
 	<flow name="flowcontrol-scather-gather-flow" doc:id="6e6a5709-1c09-4e15-a107-6ea9c0af80d3" >
-		<http:listener doc:name="Listener" doc:id="7d8a1603-b223-4d96-b793-374aeb2bcaf6" config-ref="HTTP_Listener_config" path="/gather/{id}" allowedMethods="GET">
+		<http:listener doc:name="Listener" doc:id="7d8a1603-b223-4d96-b793-374aeb2bcaf6" config-ref="HTTP_Listener_Config" path="/gather/{id}" allowedMethods="GET">
 			<http:error-response statusCode="#[vars.statusCode default 500]" >
 				<http:body ><![CDATA[#[payload]]]></http:body>
 			</http:error-response>
@@ -32,7 +32,7 @@ payload..payload]]></ee:set-payload>
 		</ee:transform>
 	</flow>
 	<flow name="flowcontrol-scopes-cache-flow" doc:id="7e7bf29d-c7fa-464c-90d4-7c62a0940a1e">
-		<http:listener doc:name="Listener" doc:id="19b122ed-a057-43ed-9424-3f5004921d38" config-ref="HTTP_Listener_config" path="/cached-user/{id}" allowedMethods="GET">
+		<http:listener doc:name="Listener" doc:id="19b122ed-a057-43ed-9424-3f5004921d38" config-ref="HTTP_Listener_Config" path="/cached-user/{id}" allowedMethods="GET">
 			<http:error-response statusCode="#[vars.statusCode default 500]">
 				<http:body><![CDATA[#[payload]]]></http:body>
 			</http:error-response>
@@ -47,7 +47,7 @@ payload..payload]]></ee:set-payload>
 		<logger level="INFO" doc:name="end outside" doc:id="d169c5da-6138-49fb-8ad4-cbdc983ce56b" message="#['\n'] #['ended outside caching']" />
 	</flow>
 	<flow name="flowcontrol-scopes-async-flow" doc:id="877b7b71-eb50-4136-926e-1119cddb91d7" >
-		<http:listener doc:name="Listener" doc:id="7850e42b-b9e8-45a1-866d-f9a455348d31" config-ref="HTTP_Listener_config" path="/async"/>
+		<http:listener doc:name="Listener" doc:id="7850e42b-b9e8-45a1-866d-f9a455348d31" config-ref="HTTP_Listener_Config" path="/async"/>
 		<logger level="INFO" doc:name="Logger" doc:id="d4998bfe-8306-4d8d-9501-8bc9ad32c8a5" message="#[p('mule.home')]"/>
 		<async doc:name="Async" doc:id="e10141ee-1ad2-4a0a-bcf8-d832f3e29c20" >
 			<ee:transform doc:name="Transform Message" doc:id="44e55f21-c2c6-427a-b4f5-396c6b0eedb4" >

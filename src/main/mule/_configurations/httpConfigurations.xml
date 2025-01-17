@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-		<http:request-config name="HTTP_External_Request_Config" doc:name="HTTP Request configuration" doc:id="74d0f282-52e2-4816-a1a9-6c1d30cb67c6" >
-		<http:request-connection host="#[vars.httpRequest.host]" protocol="HTTPS"/>
-	</http:request-config></mule>
+	<http:request-config
+		name="HTTP_External_Request_Config"
+		doc:name="HTTP Request configuration"
+		doc:id="74d0f282-52e2-4816-a1a9-6c1d30cb67c6">
+		<http:request-connection
+			host="#[vars.httpRequest.host]" protocol="HTTPS" />
+	</http:request-config>
+	<http:listener-config name="HTTP_Listener_Config"
+		doc:name="HTTP Listener config"
+		doc:id="dc3d0563-f585-4035-97b5-1ab3c0833be5">
+		<http:listener-connection host="0.0.0.0"
+			port="8081" />
+	</http:listener-config>
+</mule>

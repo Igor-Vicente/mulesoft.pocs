@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 	<flow name="batch-processing-flow" doc:id="a9473973-01c4-4da0-b90b-0a0571c93c0b" >
-		<http:listener doc:name="Listener" doc:id="e1638d94-3aa5-4199-b7cf-695f9ae327df" config-ref="HTTP_Listener_config" path="/batchjob"/>
+		<http:listener doc:name="Listener" doc:id="e1638d94-3aa5-4199-b7cf-695f9ae327df" config-ref="HTTP_Listener_Config" path="/batchjob"/>
 		<ee:transform doc:name="set payload" doc:id="1a5cbe01-5f05-428e-b82a-ac8daff5345b" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0

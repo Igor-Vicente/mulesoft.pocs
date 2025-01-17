@@ -4,21 +4,21 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/kafka http://www.mulesoft.org/schema/mule/kafka/current/mule-kafka.xsd">
-<!-- 	<kafka:consumer-config name="Apache_Kafka_Consumer_configuration" doc:name="Apache Kafka Consumer configuration" doc:id="043735d7-88dc-4707-9368-d4ab678b9820" > -->
-<!-- 		<kafka:consumer-plaintext-connection groupId="${kafka.groupId}" maximumPollingInterval="120" sessionTimeout="30"> -->
-<!-- 			<kafka:bootstrap-servers > -->
-<!-- 				<kafka:bootstrap-server value="${kafka.servers}" /> -->
-<!-- 			</kafka:bootstrap-servers> -->
-<!-- 			<kafka:topic-patterns > -->
-<!-- 				<kafka:topic-pattern value="${kafka.topic}" /> -->
-<!-- 			</kafka:topic-patterns> -->
-<!-- 		</kafka:consumer-plaintext-connection> -->
-<!-- 	</kafka:consumer-config> -->
-<!-- 	<kafka:producer-config name="Apache_Kafka_Producer_configuration" doc:name="Apache Kafka Producer configuration" doc:id="dd5c37f6-eb55-44b2-8ee2-1470d2520dee" > -->
-<!-- 		<kafka:producer-plaintext-connection > -->
-<!-- 			<kafka:bootstrap-servers > -->
-<!-- 				<kafka:bootstrap-server value="${kafka.servers}" /> -->
-<!-- 			</kafka:bootstrap-servers> -->
-<!-- 		</kafka:producer-plaintext-connection> -->
-<!-- 	</kafka:producer-config> -->
+	<kafka:consumer-config name="Apache_Kafka_Consumer_configuration" doc:name="Apache Kafka Consumer configuration" doc:id="043735d7-88dc-4707-9368-d4ab678b9820" >
+		<kafka:consumer-plaintext-connection groupId="${kafka.groupId}" maximumPollingInterval="120" sessionTimeout="30">
+			<kafka:bootstrap-servers >
+				<kafka:bootstrap-server value="${kafka.servers}" />
+			</kafka:bootstrap-servers>
+			<kafka:topic-patterns >
+				<kafka:topic-pattern value="${kafka.topic}" />
+			</kafka:topic-patterns>
+		</kafka:consumer-plaintext-connection>
+	</kafka:consumer-config>
+	<kafka:producer-config name="Apache_Kafka_Producer_configuration" doc:name="Apache Kafka Producer configuration" doc:id="dd5c37f6-eb55-44b2-8ee2-1470d2520dee" >
+		<kafka:producer-plaintext-connection >
+			<kafka:bootstrap-servers >
+				<kafka:bootstrap-server value="${kafka.servers}" />
+			</kafka:bootstrap-servers>
+		</kafka:producer-plaintext-connection>
+	</kafka:producer-config>
 </mule>

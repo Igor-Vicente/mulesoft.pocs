@@ -10,7 +10,7 @@ http://www.mulesoft.org/schema/mule/confluent-schema-registry http://www.mulesof
 http://www.mulesoft.org/schema/mule/tracing http://www.mulesoft.org/schema/mule/tracing/current/mule-tracing.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
 	<flow name="kafka-publisher-flow-STOPPED" doc:id="9a673722-1b0d-41eb-b0eb-c5e8ee9f75eb" initialState="stopped">
-		<http:listener doc:name="Listener" doc:id="9d1e7a70-dd26-4551-8fd9-ed18e25152db" config-ref="HTTP_Listener_config" path="/publisher">
+		<http:listener doc:name="Listener" doc:id="9d1e7a70-dd26-4551-8fd9-ed18e25152db" config-ref="HTTP_Listener_Config" path="/publisher">
 			<http:error-response >
 				<http:body ><![CDATA[#[payload]]]></http:body>
 			</http:error-response>
@@ -25,11 +25,11 @@ payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<confluent-schema-registry:replace-avro-schema-with-id doc:name="Replace AVRO schema with id" doc:id="5a981265-ca97-44b5-8389-9cfbab876290" config-ref="Confluent_Schema_Registry_Connector_Config" subject="#[Mule::p('kafka.topic')++'-value']"/>
-		<!-- [STUDIO:"Publish"]<kafka:publish doc:name="Publish" doc:id="fb8ab55d-cd80-4f82-aa2f-2da043a28553" config-ref="Apache_Kafka_Producer_configuration" topic="${kafka.topic}">
+		<kafka:publish doc:name="Publish" doc:id="fb8ab55d-cd80-4f82-aa2f-2da043a28553" config-ref="Apache_Kafka_Producer_configuration" topic="${kafka.topic}">
 			<kafka:headers ><![CDATA[#[{
 	'x-correlation-id': correlationId
-}&#93;&#93;&#93;></kafka:headers>
-		</kafka:publish> [STUDIO] -->
+}]]]></kafka:headers>
+		</kafka:publish>
 		<ee:transform doc:name="payload to json" doc:id="b0719f04-2d5f-48fc-8486-46b72e848542" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -41,9 +41,9 @@ payload]]></ee:set-payload>
 		<logger level="INFO" doc:name="payload" doc:id="ed0e77d3-5309-470b-880d-70fd93a7e95c" message="#['\n'] #['\n'] #[payload]" />
 	</flow>
 	<flow name="kafka-operations-flow-STOPPED" doc:id="6a3a3dae-158c-4a9f-af20-3d88d3ba8673" initialState="stopped">
-		<!-- [STUDIO:"Message listener"]<kafka:message-listener doc:name="Message listener" doc:id="d1947a2f-4024-4ac7-9fe2-79f97e4a44c3" config-ref="Apache_Kafka_Consumer_configuration">
+		<kafka:message-listener doc:name="Message listener" doc:id="d1947a2f-4024-4ac7-9fe2-79f97e4a44c3" config-ref="Apache_Kafka_Consumer_configuration">
 			<redelivery-policy maxRedeliveryCount="3" />
-		</kafka:message-listener> [STUDIO] -->
+		</kafka:message-listener>
 		<tracing:with-correlation-id doc:name="With CorrelationID" doc:id="28d62c38-9830-4dab-b967-205ffd37141f" correlationId="#[attributes.headers.'x-correlation-id' default correlationId]">
 			<logger level="INFO" doc:name="attributes" doc:id="ddbf8933-339a-4df3-846d-9bbeeb6572f7" message="#['\n'] #['\n'] #[output json --- attributes]" />
 			<confluent-schema-registry:replace-id-with-avro-schema doc:name="Replace id with AVRO schema" doc:id="5d78c209-80a0-47d5-a95a-bcc9c1bc8e56" config-ref="Confluent_Schema_Registry_Connector_Config"/>
