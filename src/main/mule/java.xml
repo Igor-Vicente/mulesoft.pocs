@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="java-flow" doc:id="9036fe24-e745-4898-a7b0-2401d82a51ef" >
+		<http:listener doc:name="Listener" doc:id="6314ee78-9155-44d6-9e4f-e333fcdb91c7" config-ref="HTTP_Listener_Config" path="/java"/>
+		<java:invoke-static doc:name="Invoke static" doc:id="f2a2bc39-ae6e-44cc-af13-3892fef8f772" class="mulesoft.pocs.Person" method="FullName(java.lang.String,java.lang.String)" target="fullName">
+			<java:args ><![CDATA[#[{
+	fName: payload.fName,
+	lName: payload.lName
+}]]]></java:args>
+		</java:invoke-static>
+		<ee:transform doc:name="Transform Message" doc:id="33c253c5-93a0-4b18-ae00-09cd27782dc2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+import java!mulesoft::pocs::Person
+---
+{
+	fName: payload.fName,
+	lName: payload.lName,
+	fullName: vars.fullName,
+	message: Person::Welcome(vars.fullName)
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<java:new doc:name="New Child" doc:id="0ceb926d-2c57-47e8-bd6e-974d8e4d8098" class="mulesoft.pocs.Child" constructor="Child()"/>
+		<java:validate-type doc:name="Validate  if class is a Person" doc:id="87c273ba-1a24-41d0-9ceb-e45d118ca4a7" class="mulesoft.pocs.Person" instance="#[payload]"/>
+	</flow>
+</mule>
