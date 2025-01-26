@@ -1,6 +1,8 @@
 # Docker with Mulesoft
 
 Using docker as a server for mulesoft applications.
+
+
 OBS: mule-ee-distribution-standalone-4.8.3.zip IS JUST AN EXAMPLE, YOU WILL NEED TO DOWNLOAD THE MULE RUNTIME STANDALONE IN THE WEBSITE (https://www.mulesoft.com/lp/dl/anypoint-mule-studio)
 
 ## Create the docker image with the mule runtime:
