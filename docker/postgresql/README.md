@@ -41,7 +41,7 @@ now you can interact with the PostgreSQL database, using the command-line interf
 - \l : list databases
 - CREATE DATABASE <db_name>: create database
 - DROP DATABASE <db_name: drop database
-- \c : connect to the database
+- \c <db_name> : connect to the database
 - CREATE TABLE <table_name> (columnName* columnType* constrant): create table in the connected database
 - \d : list tables of the connected database
 - \d <table_name>  : table details
