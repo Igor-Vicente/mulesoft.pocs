@@ -1,4 +1,4 @@
-# Creating Postgresql SGBD and connecting with Pgadmin (UI)
+# Creating Postgresql (SGBD) and connecting with Pgadmin (UI)
 
 ## Run the containers
 
