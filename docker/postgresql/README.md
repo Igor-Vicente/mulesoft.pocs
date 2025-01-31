@@ -43,6 +43,7 @@ now you can interact with the PostgreSQL database, using the command-line interf
 - DROP DATABASE <db_name: drop database
 - \c <db_name> : connect to the database
 - CREATE TABLE <table_name> (columnName* columnType* constrant): create table in the connected database
+- DROP TABLE <table_name> : drop table
 - \d : list tables of the connected database
 - \d <table_name>  : table details
 - CREATE TABLE person (id BIGSERIAL NOT NULL PRIMARY KEY, first_name VARCHAR(50) NOT NULL, last_name VARCHAR(50) NOT NULL, gender VARCHAR(7) NOT NULL, birth_date DATE NOT NULL, email VARCHAR(150));
